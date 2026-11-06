@@ -1,0 +1,28 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+type: command
+display_name: cw1-incident-data-pipeline
+experiment_name: cw1-data-preparation
+description: Add documented noise to raw incidents, clean and prepare chronological splits.
+code: ./src
+compute: azureml:CW1
+command: >-
+  python run_pipeline.py
+  --input "${{inputs.incidents}}"
+  --output "${{outputs.prepared}}"
+inputs:
+  incidents:
+    type: uri_file
+    path: azureml:incidents:1
+    mode: download
+outputs:
+  prepared:
+    type: uri_folder
+    mode: upload
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04:latest
+  conda_file: ./conda.yaml
+limits:
+  timeout: 3600
+tags:
+  coursework: CW1
+  noise_seed: "774"
